@@ -78,7 +78,7 @@ if st.session_state.conexion_exitosa and st.session_state.conn:
     # -----------------------------
     # Interfaz Streamlit
     # -----------------------------
-    st.title("📍 Tablero Geoespacial de Incidencia Delictiva - CDMX")
+    st.title("📍 Tablero Geoespacial de Incidencia Delictiva - CDMX (utilizando una base de datos)")
 
     st.sidebar.header("Filtros")
     alcaldias = sorted(data['Alcaldía'].unique())
