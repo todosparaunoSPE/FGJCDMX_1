@@ -21,17 +21,17 @@ st.set_page_config(page_title="Tablero Geoespacial FGJCDMX", layout="wide")
 # Conexión a la base de datos
 # -----------------------------
 def conectar_base_datos(nombre_db, contrasena):
+    # La contraseña correcta es 'admin123'
     contrasena_correcta = "admin123"
+
     if contrasena == contrasena_correcta:
         try:
             conn = sqlite3.connect(nombre_db)
             return conn, True  # Retorna la conexión y un True para indicar éxito
         except sqlite3.Error as e:
-            st.error(f"Error al conectar a la base de datos: {e}")
-            return None, False
+            return None, False  # Retorna None y False si la conexión falla
     else:
-        st.error("Contraseña incorrecta.")
-        return None, False
+        return None, False  # Si la contraseña no es correcta
 
 # Interfaz para que el usuario ingrese la base de datos y la contraseña
 st.sidebar.header("Conexión a la Base de Datos")
@@ -63,12 +63,8 @@ def cargar_datos(_conn):
     FROM delitos d
     JOIN alcaldias a ON d.alcaldia_id = a.id
     '''
-    try:
-        df = pd.read_sql_query(query, _conn, parse_dates=['Fecha'])
-        return df
-    except Exception as e:
-        st.error(f"Error al ejecutar la consulta SQL: {e}")
-        return pd.DataFrame()
+    df = pd.read_sql_query(query, _conn, parse_dates=['Fecha'])
+    return df
 
 # Verificar si la conexión es exitosa antes de intentar cargar los datos
 if conn:
