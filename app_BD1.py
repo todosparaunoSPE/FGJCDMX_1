@@ -33,21 +33,26 @@ def conectar_base_datos(nombre_db, contrasena):
     else:
         return None, False  # Si la contraseña no es correcta
 
+# Inicializar la conexión en session_state si no existe
+if 'conn' not in st.session_state:
+    st.session_state.conn = None
+    st.session_state.conexion_exitosa = False
+
 # Interfaz para que el usuario ingrese la base de datos y la contraseña
 st.sidebar.header("Conexión a la Base de Datos")
 base_datos_usuario = st.sidebar.text_input("Introduce el nombre de la base de datos", "incidencia_cdmx.db")
 contrasena_usuario = st.sidebar.text_input("Introduce la contraseña", type="password")
-
-# Definir una variable de conexión que sea inicializada en None
-conn = None
 
 # Botón para intentar conectar
 if st.sidebar.button("Conectar"):
     if base_datos_usuario and contrasena_usuario:
         conn, exito = conectar_base_datos(base_datos_usuario, contrasena_usuario)
         if exito:
+            st.session_state.conn = conn
+            st.session_state.conexion_exitosa = True
             st.sidebar.success(f"✅ Se estableció la conexión con la base de datos: {base_datos_usuario}")
         else:
+            st.session_state.conexion_exitosa = False
             st.sidebar.error("❌ No se pudo conectar. Verifica la base de datos y la contraseña.")
     else:
         st.sidebar.error("❌ Por favor, completa todos los campos.")
@@ -67,8 +72,8 @@ def cargar_datos(_conn):
     return df
 
 # Verificar si la conexión es exitosa antes de intentar cargar los datos
-if conn:
-    data = cargar_datos(conn)
+if st.session_state.conexion_exitosa and st.session_state.conn:
+    data = cargar_datos(st.session_state.conn)
 
     # -----------------------------
     # Interfaz Streamlit
